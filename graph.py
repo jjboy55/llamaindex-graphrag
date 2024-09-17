@@ -1,21 +1,25 @@
 import os
-from llama_index.core import StorageContext, load_index_from_storage
+from dotenv import load_dotenv
+from llama_index.core import StorageContext, load_index_from_storage, Settings
 from llama_index.core.indices import PropertyGraphIndex
 from llama_index.core import SimpleDirectoryReader
-from decouple import config
+from llama_index.llms.openai import OpenAI
+
+# from decouple import config
+# os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
 
 # Configurations
-os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
+api_key = os.getenv("OPENAI_API_KEY")
+Settings.llm = OpenAI(model="gpt-4o-mini", api_key=api_key)
 
+load_dotenv()
 
 storage_dir = "./graph_store"
 # Load documents and build index
-documents = SimpleDirectoryReader(
-    "data"
-).load_data()
+documents = SimpleDirectoryReader("data").load_data()
 
 
-# create and Store the date in the Graph store 
+# create and Store the date in the Graph store
 index = PropertyGraphIndex.from_documents(documents)
 index.storage_context.persist(storage_dir)
 

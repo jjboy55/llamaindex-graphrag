@@ -1,19 +1,22 @@
 import os
+from dotenv import load_dotenv
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
-from llama_index.core import StorageContext, load_index_from_storage
-from decouple import config
+from llama_index.core import StorageContext, load_index_from_storage, Settings
+from llama_index.llms.openai import OpenAI
 
+load_dotenv()
+# from decouple import config
+# os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
 # Configurations
-os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
+api_key = os.getenv("OPENAI_API_KEY")
+Settings.llm = OpenAI(model="gpt-4o-mini", api_key=api_key)
 
 
 storage_dir = "./vector_store"
 # Load documents and build index
-documents = SimpleDirectoryReader(
-    "data"
-).load_data()
+documents = SimpleDirectoryReader("data").load_data()
 
-#Create and Store the date in the vector store 
+# Create and Store the date in the vector store
 index = VectorStoreIndex.from_documents(documents)
 index.storage_context.persist(persist_dir=storage_dir)
 
