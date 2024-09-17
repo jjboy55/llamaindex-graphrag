@@ -1,1 +1,5 @@
 .venv
+.env
+vector_store
+graph_store
+.DS_Store
